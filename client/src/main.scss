@@ -339,3 +339,25 @@ header {
         border: none;
     }
 }
+
+.comment {
+    margin: 15px;
+    border-radius: 10px;
+    flex-direction: column;
+    div {
+        display: flex;
+        flex-direction: row !important;
+        img {
+            border-radius: 100%;
+            + div {
+                flex-direction: column !important;
+            }
+        }
+    }
+    &:nth-child(even) {
+        background-color: $secondary;
+    }
+    &:nth-child(odd) {
+        background-color: #ffa4a4;
+    }
+}

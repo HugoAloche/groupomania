@@ -10,6 +10,15 @@ exports.getPosts = (req, res, next) => {
     })
 }
 
+exports.getComments = (req, res, next) => {
+    db.query('SELECT * FROM comments ORDER BY idcomments DESC', function (err, result) {
+        if (err) throw err;
+        else {
+            res.status(200).json({result})
+        }
+    })
+}
+
 exports.getPostFromUser = (req, res, next) => {
     db.query('SELECT * FROM posts WHERE idusers = ? ORDER BY idposts DESC', [req.params.id], function (err, result) {
         if (err) throw err;
@@ -74,6 +83,7 @@ exports.updatePost = (req, res, next) => {
         }
 
 exports.deletePost = (req, res, next) => {
+
     db.query('SELECT * FROM posts WHERE idposts = ?', [req.params.id], (err, result) => {
         if (err) throw err;
         else {
@@ -83,7 +93,34 @@ exports.deletePost = (req, res, next) => {
                     if (err) throw err;
                 })
             }
+            else {
+                db.query('SELECT * FROM comments WHERE idPost = ?', [req.params.id], function (err, result) {
+                    if (err) throw err;
+                    else if (result != null) {
+                        result.forEach(element => {
+                            db.query('DELETE FROM comments WHERE idcomments = ?', [element.idcomments], function (err, result) {
+                                if (err) throw err;
+                            })
+                        })
+                    }
+                })
+            }
             db.query('DELETE FROM posts WHERE idposts = ?', [req.params.id], function (err, result) {
+                if (err) throw err;
+                else {
+                    res.status(200).json({result})
+                }
+            })
+        }
+    })
+}
+
+exports.createComment = (req, res, next) => {
+    db.query('SELECT pseudo FROM users WHERE idusers = ?', [req.body.idUser], function (err, result) {
+        if (err) throw err;
+        else {
+            const now = new Date().toISOString().replace('T', ' ').split(' ')[0];
+            db.query('INSERT INTO comments (idPost, author, comment, date) VALUES (?, ?, ?, ?)', [req.body.idPost, result[0].pseudo, req.body.comment, now], (err, result) => {
                 if (err) throw err;
                 else {
                     res.status(200).json({result})

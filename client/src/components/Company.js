@@ -6,16 +6,17 @@ import update from '../img/icons/update.svg'
 import del from '../img/icons/delete.svg'
 import account from '../img/icons/account.svg'
 import { useNavigate } from "react-router-dom";
+import {updatePost ,deletePost, sendComment} from '../controllers/post'
 
 function Company() {
     const [connected, setConnection] = useState(false)
+    const [comment, setComment] = useState('')
     const [showOptions, setShowOptions] = useState(false)
     const [updateContent, setUpdateContent] = useState(false)
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     const [file, setPicture] = useState(null);
     const [imgData, setImgData] = useState('https://via.placeholder.com/600');
-    const [errorForm, setErrorForm] = useState(false)
 
     const onChangeImage = (event) => {
         if (event.target.files[0]) {
@@ -29,41 +30,6 @@ function Company() {
     }
     const handleSubmit = (event) => {
         event.preventDefault();
-    }
-    const updatePost = (id) => {
-        let data = new FormData()
-        if (title && content) {
-            if (file) {
-                data.append('image', file)
-                data.append('title', title)
-                data.append('content', content)
-            } else {
-                data.append('title', title)
-                data.append('content', content)
-            }
-            fetch('http://localhost:3000/api/auth/updatePost' + id, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
-                },
-                body: data
-            })
-            .then(res => {
-                switch (res.status) {
-                    case 200:
-                        window.location.reload();
-                        break;
-                    default:
-                        setErrorForm(true)
-                        break;
-                }
-            })
-            .catch(err => {
-                console.log(err);
-            })
-        } else {
-            setErrorForm(true)
-        }
     }
 
     useEffect(() => {
@@ -95,6 +61,7 @@ function Company() {
     }
         
     const [lstPosts, setPosts] = useState([])
+    const [lstComments, setComments] = useState([])
 
     const listPosts = async () => {
         return await fetch('http://localhost:3000/api/auth/getPosts', {
@@ -126,6 +93,36 @@ function Company() {
         })
     }, [])
 
+    useEffect(() => {
+        listComments().then(res => {
+            setComments(res)
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }, [])
+
+    const listComments = async () => {
+        return await fetch('http://localhost:3000/api/auth/getComments', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(res => {
+            return res.json()
+            .then(data => {
+                return data.result
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
     const hisPost = (idUser, idPost) => {
         if (idUser === parseInt(localStorage.getItem('id'))) {
             return <div className='editSection'>
@@ -138,28 +135,6 @@ function Company() {
         }
     }
 
-    const deletePost = (idPost) => {
-        fetch('http://localhost:3000/api/auth/deletePost' + idPost, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-            },
-        })
-        .then(res => {
-            switch (res.status) {
-                case 200:
-                    window.location.reload();
-                    break;
-                default:
-                    break;
-            }
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }
-
     const showUpdateContent = (id) => {
         if (updateContent) {
             return <div className='not'>
@@ -170,11 +145,41 @@ function Company() {
                     <textarea type='text' placeholder='Contenu...' id='content' maxLength={255} value={content} required onChange={(event) => {setContent(event.target.value)}}></textarea>
                     <label htmlFor='image'>Ajouter une image</label>
                     <input type='file' id='image' onChange={onChangeImage}></input>
-                    <button className='fit' onClick={() => updatePost(id)}>Mettre à jour</button>
+                    <button className='fit' onClick={() => updatePost(id, title, content, file)}>Mettre à jour</button>
                 </form>
-                {errorForm ? <p className='error'>Veuillez remplir tout les champs !</p> : null}
             </div>
         }
+    }
+
+    const commentForm = (id) => {
+        if (connected) {
+            return <form onSubmit={commentFormHandler}>
+                    <label htmlFor='comment'>Commentaire</label>
+                    <textarea type='text' placeholder='Commentaire...' id='comment' maxLength={255} onChange={(event) => {setComment(event.target.value)}}></textarea>
+                    <button className='fit' onClick={() => sendComment(comment, id)}>Envoyer</button>
+                </form>
+        }
+    }
+
+    const commentSection = (id) => {
+        return lstComments.map((comment, index) => {
+            if (comment.idPost === id) {
+                return <div key={index} className='comment'>
+                    <div>
+                        <img srcSet='https://i.pravatar.cc/95?img=2' alt='avatar' />
+                        <div>
+                            <p><b>@{comment.author}</b></p>
+                            <p>{comment.date}</p>
+                        </div>
+                    </div>
+                    <p>{comment.comment}</p>
+                </div>
+            }
+        })
+    }
+
+    const commentFormHandler = (event) => {
+        event.preventDefault()
     }
 
   return (
@@ -206,6 +211,8 @@ function Company() {
                     {updateContent ? <img srcSet={imgData} alt='je sais pas '/> : null}
                 </div>
                 {showUpdateContent(post.idposts)}
+                {commentForm(post.idposts)}
+                {commentSection(post.idposts)}
             </ul>
             ))}
     </section>
