@@ -9,7 +9,9 @@ router.get('/getComments', postCtrl.getComments);
 router.get('/getPostFromUser:id', auth, postCtrl.getPostFromUser);
 router.post('/createPost', auth, multer, postCtrl.createPost);
 router.put('/updatePost:id', auth, multer, postCtrl.updatePost);
+router.put('/updateComment:id', auth, postCtrl.updateComment);
 router.post('/deletePost:id', auth, postCtrl.deletePost);
+router.post('/deleteComment:id', auth, postCtrl.deleteComment);
 router.post('/createComment', auth, postCtrl.createComment);
 
 module.exports = router;

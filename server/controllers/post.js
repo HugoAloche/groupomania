@@ -111,6 +111,9 @@ exports.deletePost = (req, res, next) => {
                     res.status(200).json({result})
                 }
             })
+            db.query('DELETE FROM comments WHERE idPost = ?', [req.params.id], function (err, result) {
+                if (err) throw err;
+            })
         }
     })
 }
@@ -120,12 +123,30 @@ exports.createComment = (req, res, next) => {
         if (err) throw err;
         else {
             const now = new Date().toISOString().replace('T', ' ').split(' ')[0];
-            db.query('INSERT INTO comments (idPost, author, comment, date) VALUES (?, ?, ?, ?)', [req.body.idPost, result[0].pseudo, req.body.comment, now], (err, result) => {
+            db.query('INSERT INTO comments (idPost, author, comment, date, idUser) VALUES (?, ?, ?, ?, ?)', [req.body.idPost, result[0].pseudo, req.body.comment, now, req.body.idUser], (err, result) => {
                 if (err) throw err;
                 else {
                     res.status(200).json({result})
                 }
             })
+        }
+    })
+}
+
+exports.deleteComment = (req, res, next) => {
+    db.query('DELETE FROM comments WHERE idcomments = ?', [req.params.id], function (err, result) {
+        if (err) throw err;
+        else {
+            res.status(200).json({result})
+        }
+    })
+}
+
+exports.updateComment = (req, res, next) => {
+    db.query(`UPDATE comments SET comment = '${req.body.comment}' WHERE idcomments = ${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        else {
+            res.status(200).json({result})
         }
     })
 }

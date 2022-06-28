@@ -316,6 +316,7 @@ header {
     }
     .editSection {
         position: absolute;
+        z-index: 10;
         right: 5px;
         top: 0;
         cursor: pointer;
@@ -344,7 +345,7 @@ header {
     margin: 15px;
     border-radius: 10px;
     flex-direction: column;
-    div {
+    div:not(.editSection) {
         display: flex;
         flex-direction: row !important;
         img {
@@ -359,5 +360,8 @@ header {
     }
     &:nth-child(odd) {
         background-color: #ffa4a4;
+    }
+    p {
+        word-break: break-all;
     }
 }

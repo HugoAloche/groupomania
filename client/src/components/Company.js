@@ -6,13 +6,15 @@ import update from '../img/icons/update.svg'
 import del from '../img/icons/delete.svg'
 import account from '../img/icons/account.svg'
 import { useNavigate } from "react-router-dom";
-import {updatePost ,deletePost, sendComment} from '../controllers/post'
+import {updatePost ,deletePost, sendComment, deleteComment, updateComments} from '../controllers/post'
 
 function Company() {
     const [connected, setConnection] = useState(false)
     const [comment, setComment] = useState('')
     const [showOptions, setShowOptions] = useState(false)
+    const [showCommentOptions, setShowCommentOptions] = useState(false)
     const [updateContent, setUpdateContent] = useState(false)
+    const [updateComment, setUpdateComment] = useState(false)
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     const [file, setPicture] = useState(null);
@@ -135,9 +137,22 @@ function Company() {
         }
     }
 
+    const hisComment = (idComment, idUser) => {
+        if (idUser === parseInt(localStorage.getItem('id'))) {
+                        return <div className='editSection'>
+                            <img onClick={() => setShowCommentOptions(!showCommentOptions)} className='editLogo' srcSet={edit} alt="logo d'édition" />
+                            {showCommentOptions ? <ul>
+                                <li onClick={() => setUpdateComment(!updateComment)}><img srcSet={update} alt="logo de mise à jour" /></li>
+                                <li onClick={() => deleteComment(idComment)}><img srcSet={del} alt="lgoo de suppresion" /></li>
+                            </ul> : null}
+                        {showUpdateComment(idComment)}
+                        </div>
+        }
+    }
+
     const showUpdateContent = (id) => {
         if (updateContent) {
-            return <div className='not'>
+            return <div>
                 <form onSubmit={handleSubmit}>
                     <label htmlFor='title'>Titre de votre article <sup>*</sup></label>
                     <input type='text' placeholder='Titre...' id='title' maxLength={255} value={title} required onChange={(event) => {setTitle(event.target.value)}}></input>
@@ -161,10 +176,23 @@ function Company() {
         }
     }
 
-    const commentSection = (id) => {
+    const showUpdateComment = (id) => {
+        if (updateComment) {
+            return <div>
+            <form onSubmit={handleSubmit}>
+                <label htmlFor='comment'>Votre commentaire <sup>*</sup></label>
+                <textarea type='text' placeholder='Votre commentaire...' id='comment' maxLength={255} value={comment} required onChange={(event) => {setComment(event.target.value)}}></textarea>
+                <button className='fit' onClick={() => updateComments(id, comment)}>Mettre à jour</button>
+            </form>
+        </div>
+        }
+    }
+
+    const commentSection = (idPost) => {
         return lstComments.map((comment, index) => {
-            if (comment.idPost === id) {
+            if (comment.idPost === idPost) {
                 return <div key={index} className='comment'>
+                    {hisComment(comment.idcomments, comment.idUser)}
                     <div>
                         <img srcSet='https://i.pravatar.cc/95?img=2' alt='avatar' />
                         <div>

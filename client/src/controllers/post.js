@@ -168,3 +168,50 @@ export async function sendComment (comment, idpost) {
         console.log(err);
     })
 }
+
+export async function deleteComment (id) {
+    fetch('http://localhost:3000/api/auth/deleteComment' + id, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+    })
+    .then(res => {
+        switch (res.status) {
+            case 200:
+                window.location.reload();
+                break;
+            default:
+                break;
+        }
+    })
+    .catch(err => {
+        console.log(err);
+    })
+}
+
+export async function updateComments (id, comment) {
+    fetch('http://localhost:3000/api/auth/updateComment' + id, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        body: JSON.stringify({
+            comment: comment
+        })
+    })
+    .then(res => {
+        switch (res.status) {
+            case 200:
+                window.location.reload();
+                break;
+            default:
+                break;
+        }
+    })
+    .catch(err => {
+        console.log(err);
+    })
+}
