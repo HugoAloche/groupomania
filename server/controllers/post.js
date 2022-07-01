@@ -10,6 +10,15 @@ exports.getPosts = (req, res, next) => {
     })
 }
 
+exports.getLikes = (req, res, next) => {
+    db.query('SELECT likes, dislikes FROM posts', function (err, result) {
+        if (err) throw err;
+        else {
+            res.status(200).json({result})
+        }
+    })
+}
+
 exports.getComments = (req, res, next) => {
     db.query('SELECT * FROM comments ORDER BY idcomments DESC', function (err, result) {
         if (err) throw err;
@@ -147,6 +156,24 @@ exports.updateComment = (req, res, next) => {
         if (err) throw err;
         else {
             res.status(200).json({result})
+        }
+    })
+}
+
+exports.sendLike = (req, res, next) => {
+    db.query(`SELECT * FROM posts WHERE idposts = ${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        else {
+            const array = Array.of(result[0].likes)
+            array.push(JSON.stringify(req.body.idUser))
+            console.log(array);
+            array.push(JSON.stringify(req.body.idUser))
+            db.query(`UPDATE posts SET likes = [${array}] WHERE idposts = ${req.params.id}`, function (err, result) {
+                if (err) throw err;
+                else {
+                    res.status(200).json({result})
+                }
+            })
         }
     })
 }

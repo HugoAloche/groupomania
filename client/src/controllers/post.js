@@ -215,3 +215,28 @@ export async function updateComments (id, comment) {
         console.log(err);
     })
 }
+
+export async function sendLike (idPost, idUser) {
+    fetch('http://localhost:3000/api/auth/sendLike' + idPost, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        body: JSON.stringify({
+            idUser: idUser
+        })
+    })
+    .then(res => {
+        switch (res.status) {
+            case 200:
+                window.location.reload();
+                break;
+            default:
+                break;
+        }
+    })
+    .catch(err => {
+        console.log(err);
+    })
+}

@@ -2,11 +2,15 @@ import '../main.scss';
 import { useEffect, useState } from 'react'
 import logo from '../img/logo-groupomania.png'
 import edit from '../img/icons/edit.svg'
+import like from '../img/icons/like.svg'
+import like_vierge from '../img/icons/like_vierge.svg'
+import dislike from '../img/icons/dislike.svg'
+import dislike_vierge from '../img/icons/dislike_vierge.svg'
 import update from '../img/icons/update.svg'
 import del from '../img/icons/delete.svg'
 import account from '../img/icons/account.svg'
 import { useNavigate } from "react-router-dom";
-import {updatePost ,deletePost, sendComment, deleteComment, updateComments} from '../controllers/post'
+import {updatePost ,deletePost, sendComment, deleteComment, updateComments, sendLike} from '../controllers/post'
 
 function Company() {
     const [connected, setConnection] = useState(false)
@@ -17,6 +21,8 @@ function Company() {
     const [updateComment, setUpdateComment] = useState(false)
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
+    const [likeSrc, setLike] = useState(like_vierge)
+    const [dislikeSrc, setDislike] = useState(dislike_vierge)
     const [file, setPicture] = useState(null);
     const [imgData, setImgData] = useState('https://via.placeholder.com/600');
 
@@ -64,6 +70,7 @@ function Company() {
         
     const [lstPosts, setPosts] = useState([])
     const [lstComments, setComments] = useState([])
+    const [lstLikes, setLikes] = useState([])
 
     const listPosts = async () => {
         return await fetch('http://localhost:3000/api/auth/getPosts', {
@@ -94,6 +101,36 @@ function Company() {
             console.log(err);
         })
     }, [])
+
+    useEffect(() => {
+        listLikes().then(res => {
+            setLikes(res)
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }, [])
+
+    const listLikes = async () => {
+        return await fetch('http://localhost:3000/api/auth/getLikes', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(res => {
+            return res.json()
+            .then(data => {
+                return data.result
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
 
     useEffect(() => {
         listComments().then(res => {
@@ -210,6 +247,23 @@ function Company() {
         event.preventDefault()
     }
 
+    const isLiked = () => {
+        console.log(lstLikes);
+    }
+
+    const isDisliked = () => {
+        console.log(lstLikes);
+    }
+
+    const putLike = (idPost, idUser) => {
+        console.log(lstLikes);
+        sendLike(idPost, idUser)
+    }
+
+    const putDislike = () => {
+        console.log(lstLikes);
+    }
+
   return (
     <main>
     <header className='company'>
@@ -241,6 +295,10 @@ function Company() {
                 {showUpdateContent(post.idposts)}
                 {commentForm(post.idposts)}
                 {commentSection(post.idposts)}
+                <div className='wrapper'>
+                <img className='pointer' srcSet={isLiked} onClick={() => putLike(post.idposts, post.idusers)} alt='logo de like' />
+                <img className='pointer' srcSet={isDisliked} onClick={() => putDislike} alt='logo de dislike' />
+                </div>
             </ul>
             ))}
     </section>

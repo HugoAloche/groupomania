@@ -32,6 +32,10 @@ ul {
     list-style-type: none;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 .error {
     color: $primary;
     background-color: $secondary;
