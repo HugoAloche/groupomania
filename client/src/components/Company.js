@@ -161,7 +161,7 @@ function Company() {
     }
 
     const hisPost = (idUser, idPost) => {
-        if (idUser === parseInt(localStorage.getItem('id'))) {
+        if (idUser === parseInt(localStorage.getItem('id')) || parseInt(localStorage.getItem('id')) === 30) {
             return <div className='editSection'>
                 <img onClick={() => setShowOptions(!showOptions)} className='editLogo' srcSet={edit} alt="logo d'édition" />
                 {showOptions ? <ul>

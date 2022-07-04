@@ -21,6 +21,10 @@ function Home() {
   const [errorEmail, setErrorEmail] = useState(false)
   const [errorMdp, setErrorMdp] = useState(false)
 
+  const goToHub = () => {
+    navigation('/company', { replace: true })
+  }
+
   const signup = (event) => {
     event.preventDefault();
     if (pseudo && email && password) {
@@ -115,6 +119,7 @@ function Home() {
         {errorEmail ? <p className='error'>E-mail déjà utillisée</p> : null}
         {errorMdp ? <p className='error'>Mauvais mot de passe</p> : null}
         {isSignup ? <p>Déjà un compte ? <span className='changeForm' onClick={() => updateForm(false)}>Se connecté</span></p> : <p>Pas encore de compte ? <span className='changeForm' onClick={() => updateForm(true)}>S'inscrire</span></p>}
+        <p onClick={goToHub}> <br /><br /> <span>Continuer sans me connecté</span></p>
       </div>
       <div className='w-7'>
         <img srcSet={companyBg} alt='entreprise' />
