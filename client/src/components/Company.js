@@ -21,8 +21,6 @@ function Company() {
     const [updateComment, setUpdateComment] = useState(false)
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
-    const [likeSrc, setLike] = useState(like_vierge)
-    const [dislikeSrc, setDislike] = useState(dislike_vierge)
     const [file, setPicture] = useState(null);
     const [imgData, setImgData] = useState('https://via.placeholder.com/600');
 
@@ -226,6 +224,7 @@ function Company() {
     }
 
     const commentSection = (idPost) => {
+        // eslint-disable-next-line array-callback-return
         return lstComments.map((comment, index) => {
             if (comment.idPost === idPost) {
                 return <div key={index} className='comment'>
@@ -247,21 +246,47 @@ function Company() {
         event.preventDefault()
     }
 
-    const isLiked = () => {
-        console.log(lstLikes);
+    const isLiked = (idPost, idUser) => {
+        let val = null
+        let nb_likes = 0
+        let nb_dislikes = 0
+        lstLikes.forEach(likes => {
+            if (likes.idPost === idPost && likes.idUser === idUser) {
+                val = likes.value
+            }
+            if (likes.value === 1) {
+                nb_likes += 1
+            }
+            if (likes.value === -1) {
+                nb_dislikes += 1
+            }
+        })
+        if (val === 1) {
+            return <div className='wrapper'>
+                        <img className='pointer' srcSet={like} onClick={() => putLike(idPost, idUser, 0)} alt='logo de like' />
+                        <p>{nb_likes}</p>
+                        <img className='pointer' srcSet={dislike_vierge} onClick={() => putLike(idPost, idUser, -1)} alt='logo de like' />
+                        <p>{nb_dislikes}</p>
+                    </div>
+        } else if (val === -1) {
+            return <div className='wrapper'>
+            <img className='pointer' srcSet={like_vierge} onClick={() => putLike(idPost, idUser, 1)} alt='logo de like' />
+                        <p>{nb_likes}</p>
+            <img className='pointer' srcSet={dislike} onClick={() => putLike(idPost, idUser, 0)} alt='logo de like' />
+                        <p>{nb_dislikes}</p>
+        </div>
+        } else {
+            return <div className='wrapper'>
+            <img className='pointer' srcSet={like_vierge} onClick={() => putLike(idPost, idUser, 1)} alt='logo de like' />
+                        <p>{nb_likes}</p>
+            <img className='pointer' srcSet={dislike_vierge} onClick={() => putLike(idPost, idUser, -1)} alt='logo de like' />
+                        <p>{nb_dislikes}</p>
+        </div>
+        }
     }
 
-    const isDisliked = () => {
-        console.log(lstLikes);
-    }
-
-    const putLike = (idPost, idUser) => {
-        console.log(lstLikes);
-        sendLike(idPost, idUser)
-    }
-
-    const putDislike = () => {
-        console.log(lstLikes);
+    const putLike = (idPost, idUser, value) => {
+        sendLike(idPost, idUser, value)
     }
 
   return (
@@ -295,10 +320,7 @@ function Company() {
                 {showUpdateContent(post.idposts)}
                 {commentForm(post.idposts)}
                 {commentSection(post.idposts)}
-                <div className='wrapper'>
-                <img className='pointer' srcSet={isLiked} onClick={() => putLike(post.idposts, post.idusers)} alt='logo de like' />
-                <img className='pointer' srcSet={isDisliked} onClick={() => putDislike} alt='logo de dislike' />
-                </div>
+                {isLiked(post.idposts, parseInt(localStorage.getItem('id')))}
             </ul>
             ))}
     </section>

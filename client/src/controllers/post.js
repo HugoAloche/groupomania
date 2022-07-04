@@ -216,7 +216,7 @@ export async function updateComments (id, comment) {
     })
 }
 
-export async function sendLike (idPost, idUser) {
+export async function sendLike (idPost, idUser, value) {
     fetch('http://localhost:3000/api/auth/sendLike' + idPost, {
         method: 'PUT',
         headers: {
@@ -224,7 +224,8 @@ export async function sendLike (idPost, idUser) {
             'Authorization': 'Bearer ' + localStorage.getItem('token')
         },
         body: JSON.stringify({
-            idUser: idUser
+            idUser: idUser,
+            value: value
         })
     })
     .then(res => {
