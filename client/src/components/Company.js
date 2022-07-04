@@ -173,7 +173,7 @@ function Company() {
     }
 
     const hisComment = (idComment, idUser) => {
-        if (idUser === parseInt(localStorage.getItem('id'))) {
+        if (idUser === parseInt(localStorage.getItem('id')) || parseInt(localStorage.getItem('id')) === 30) {
                         return <div className='editSection'>
                             <img onClick={() => setShowCommentOptions(!showCommentOptions)} className='editLogo' srcSet={edit} alt="logo d'édition" />
                             {showCommentOptions ? <ul>
