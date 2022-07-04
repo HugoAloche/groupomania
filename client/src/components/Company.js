@@ -254,10 +254,10 @@ function Company() {
             if (likes.idPost === idPost && likes.idUser === idUser) {
                 val = likes.value
             }
-            if (likes.value === 1) {
+            if (likes.value === 1 && likes.idPost === idPost) {
                 nb_likes += 1
             }
-            if (likes.value === -1) {
+            if (likes.value === -1 && likes.idPost === idPost) {
                 nb_dislikes += 1
             }
         })
