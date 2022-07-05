@@ -1,7 +1,7 @@
 import '../main.scss';
 import companyBg from '../img/entreprise.jpg'
 import logo from '../img/logo-groupomania.png'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 import { login, signup } from "../controllers/user";
 
@@ -9,6 +9,7 @@ function Home() {
   const navigation = useNavigate();
         
   const [pseudo, setPeusdo] = useState('')
+  const [isConnected, setIsconnected] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
         
@@ -25,6 +26,12 @@ function Home() {
   const goToHub = () => {
     navigation('/hub', { replace: true })
   }
+
+  useEffect(() => {
+    if (localStorage.length > 0) {
+        setIsconnected(true)
+    }
+}, [])
 
   const loginHandler = (event) => {
     event.preventDefault();
@@ -53,7 +60,7 @@ function Home() {
         {errorEmail ? <p className='error'>E-mail déjà utillisée</p> : null}
         {errorMdp ? <p className='error'>Mauvais mot de passe</p> : null}
         {isSignup ? <p>Déjà un compte ? <span className='changeForm' onClick={() => updateForm(false)}>Se connecté</span></p> : <p>Pas encore de compte ? <span className='changeForm' onClick={() => updateForm(true)}>S'inscrire</span></p>}
-        <p onClick={goToHub}> <br /><br /> <span>Continuer sans me connecté</span></p>
+        <p onClick={goToHub}> <br /><br /> {isConnected ? <span>Retour au hub</span> : <span>Continuer sans me connecté</span>}</p>
       </div>
       <div className='w-7'>
         <img srcSet={companyBg} alt='entreprise' />
