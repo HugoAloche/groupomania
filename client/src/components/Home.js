@@ -3,6 +3,7 @@ import companyBg from '../img/entreprise.jpg'
 import logo from '../img/logo-groupomania.png'
 import { useState } from 'react'
 import { useNavigate } from "react-router-dom";
+import { login, signup } from "../controllers/user";
 
 function Home() {
   const navigation = useNavigate();
@@ -22,85 +23,18 @@ function Home() {
   const [errorMdp, setErrorMdp] = useState(false)
 
   const goToHub = () => {
-    navigation('/company', { replace: true })
+    navigation('/hub', { replace: true })
   }
-
-  const signup = (event) => {
-    event.preventDefault();
-    if (pseudo && email && password) {
-      fetch('http://localhost:3000/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          pseudo: pseudo,
-          email: email,
-          password: password
-      })
-    })
-    .then(res => {
-      switch (res.status) {
-        case 201:
-          login()
-          break;
-        case 401:
-          setErrorEmail(true)
-          break;
-        default:
-          break;
-      }
-    })
-    .catch(err => {
-      console.error(err);
-    })
-  } else {
-    setError(true)
-  }
-}
 
   const loginHandler = (event) => {
     event.preventDefault();
-    login()
+    login(email, password, navigation, setErrorMdp, setError)
   }
 
-  const login = () => {
-    if (email && password) {
-      fetch('http://localhost:3000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password
-      })
-    })
-    .then(res => {
-      switch (res.status) {
-        case 200:
-          res.json()
-          .then(data => {
-            localStorage.setItem('token', data.token)
-            localStorage.setItem('id', data.userId)
-            navigation('/company', { replace: true })
-          })
-          .catch(err => {console.error(err);})
-          break;
-        case 401:
-          setErrorMdp(true)
-          break;
-        default:
-          break;
-      }
-    })
-    .catch(err => {
-      console.error(err);
-    })
-  } else {
-    setError(true)
+  const signupHandler = (event) => {
+    event.preventDefault();
+    signup(pseudo, email, password, setErrorEmail, setError, navigation, setErrorMdp)
   }
-}
 
   return (
     <main>
@@ -113,7 +47,7 @@ function Home() {
           <input type='email' id='email' name='email' placeholder='test@email.com' required onChange={(event) => {setEmail(event.target.value)}} />
           <label htmlFor='password'>Mot de passe <sup>*</sup></label>
           <input type='password' id='password' name='password' placeholder='mon mot de passe' required onChange={(event) => {setPassword(event.target.value)}} />
-          {isSignup ? <button onClick={signup}>S'inscrire</button> : <button onClick={loginHandler}>Se connecter</button>}
+          {isSignup ? <button onClick={signupHandler}>S'inscrire</button> : <button onClick={loginHandler}>Se connecter</button>}
         </form>
         {errorForm ? <p className='error'>Veuillez remplir tous les champs</p> : null}
         {errorEmail ? <p className='error'>E-mail déjà utillisée</p> : null}

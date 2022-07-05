@@ -32,7 +32,7 @@ function Profile() {
     const navigation = useNavigate();
 
     const goToHub = () => {
-        navigation('/company', { replace: true })
+        navigation('/hub', { replace: true })
     }
 
     const disconnect = () => {

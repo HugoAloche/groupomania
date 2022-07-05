@@ -10,9 +10,11 @@ import update from '../img/icons/update.svg'
 import del from '../img/icons/delete.svg'
 import account from '../img/icons/account.svg'
 import { useNavigate } from "react-router-dom";
-import {updatePost ,deletePost, sendComment, deleteComment, updateComments, sendLike} from '../controllers/post'
+import {updatePost, deletePost, listPosts} from '../controllers/post'
+import {sendLike, listLikes} from '../controllers/likes'
+import {sendComment, deleteComment, updateComments, listComments} from '../controllers/comments'
 
-function Company() {
+function Hub() {
     const [connected, setConnection] = useState(false)
     const [comment, setComment] = useState('')
     const [showOptions, setShowOptions] = useState(false)
@@ -70,27 +72,6 @@ function Company() {
     const [lstComments, setComments] = useState([])
     const [lstLikes, setLikes] = useState([])
 
-    const listPosts = async () => {
-        return await fetch('http://localhost:3000/api/auth/getPosts', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(res => {
-            return res.json()
-            .then(data => {
-                return data.result
-            })
-            .catch(err => {
-                console.log(err);
-            })
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }
-
     useEffect(() => {
         listPosts().then(res => {
             setPosts(res)
@@ -109,27 +90,6 @@ function Company() {
         })
     }, [])
 
-    const listLikes = async () => {
-        return await fetch('http://localhost:3000/api/auth/getLikes', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(res => {
-            return res.json()
-            .then(data => {
-                return data.result
-            })
-            .catch(err => {
-                console.log(err);
-            })
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }
-
     useEffect(() => {
         listComments().then(res => {
             setComments(res)
@@ -138,27 +98,6 @@ function Company() {
             console.log(err);
         })
     }, [])
-
-    const listComments = async () => {
-        return await fetch('http://localhost:3000/api/auth/getComments', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(res => {
-            return res.json()
-            .then(data => {
-                return data.result
-            })
-            .catch(err => {
-                console.log(err);
-            })
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }
 
     const hisPost = (idUser, idPost) => {
         if (idUser === parseInt(localStorage.getItem('id')) || parseInt(localStorage.getItem('id')) === 30) {
@@ -328,4 +267,4 @@ function Company() {
   );
 }
 
-export default Company;
+export default Hub;
