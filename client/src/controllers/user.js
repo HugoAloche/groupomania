@@ -17,6 +17,7 @@ export function login(email, password, navigation, setErrorMdp, setError) {
           .then(data => {
             localStorage.setItem('token', data.token)
             localStorage.setItem('id', data.userId)
+            localStorage.setItem('role', data.role)
             navigation('/hub', { replace: true })
           })
           .catch(err => {console.error(err);})

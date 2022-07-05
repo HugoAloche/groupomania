@@ -1,4 +1,4 @@
-
+const db = require('../config/db')
 
 exports.sendLike = (req, res, next) => {
     if (req.body.value === 0) {

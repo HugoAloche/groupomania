@@ -1,3 +1,5 @@
+const db = require('../config/db')
+
 exports.getComments = (req, res, next) => {
     db.query('SELECT * FROM comments ORDER BY idcomments DESC', function (err, result) {
         if (err) throw err;

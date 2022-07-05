@@ -26,7 +26,7 @@ exports.createProfile = (req, res, next) => {
 
 exports.connectProfile = (req, res, next) => {
     const {email, password } = req.body;
-    db.query(`SELECT email, password, idusers FROM users WHERE email = '${email}'`, function (err, result) {
+    db.query(`SELECT email, password, idusers, role FROM users WHERE email = '${email}'`, function (err, result) {
         if (err) throw err;
         if (result.length > 0) {
         bcrypt.compare(password, result[0].password)
@@ -36,6 +36,7 @@ exports.connectProfile = (req, res, next) => {
             }
             res.status(200).json({
                 userId: result[0].idusers,
+                role: result[0].role,
                 token: jwt.sign({ userId: result[0].idusers },
                     'RANDOM_TOKEN_SECRET', { expiresIn: '24h' }
                 )
