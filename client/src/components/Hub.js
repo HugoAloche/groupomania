@@ -20,6 +20,7 @@ function Hub() {
     const [showOptions, setShowOptions] = useState(false)
     const [showCommentOptions, setShowCommentOptions] = useState(false)
     const [updateContent, setUpdateContent] = useState(false)
+    const [contentBool, setUpdateContentBool] = useState(false)
     const [updateComment, setUpdateComment] = useState(false)
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
@@ -99,12 +100,12 @@ function Hub() {
         })
     }, [])
 
-    const hisPost = (idUser, idPost) => {
+    const hisPost = (idUser, idPost, title, content, url) => {
         if (idUser === parseInt(localStorage.getItem('id')) || parseInt(localStorage.getItem('id')) === 30) {
             return <div className='editSection'>
                 <img onClick={() => setShowOptions(!showOptions)} className='editLogo' srcSet={edit} alt="logo d'édition" />
                 {showOptions ? <ul>
-                    <li onClick={() => setUpdateContent(!updateContent)}><img srcSet={update} alt="logo de mise à jour" /></li>
+                    <li onClick={url ? () => {setUpdateContent(idPost); setUpdateContentBool(!contentBool); setTitle(title); setContent(content); setImgData(url)} : () => {setUpdateContent(idPost); setUpdateContentBool(!contentBool); setTitle(title); setContent(content);}}><img srcSet={update} alt="logo de mise à jour" /></li>
                     <li onClick={() => deletePost(idPost)}><img srcSet={del} alt="lgoo de suppresion" /></li>
                 </ul> : null}
             </div>
@@ -125,7 +126,7 @@ function Hub() {
     }
 
     const showUpdateContent = (id) => {
-        if (updateContent) {
+        if (updateContent === id && contentBool)  {
             return <div>
                 <form onSubmit={handleSubmit}>
                     <label htmlFor='title'>Titre de votre article <sup>*</sup></label>
@@ -245,7 +246,7 @@ function Hub() {
                         <li className='pseudo' key={post.author}>@{post.author}</li>
                         <li key={post.date_creation}>{post.date_creation}</li>
                     </div>
-                    {hisPost(post.idusers, post.idposts)}
+                    {post.url ? hisPost(post.idusers, post.idposts, post.title, post.content, post.url) : hisPost(post.idusers, post.idposts, post.title, post.content)}
                 </div>
                 <hr />
                 <div className='between'>
